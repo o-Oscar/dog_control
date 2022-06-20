@@ -9,9 +9,8 @@ All the stuff you need to control a robot dog.
 Goal : having a simple controller that flings the motors around in sim and in real life.
 
 TODO :
--> fix motor_handle.py so that the motor ids used can be arbitrary ones -> the motor offsets must be dictionnary with (hopefully) motor ids (int) as keys
--> fix shutdown so that it will do its best to kill all motors.
--> create an abstract base controller.
+-> Finish the object separation between the observer and the controller (simple is good)
+-> Replicate the structure of the code of IdefX for a simulation using mujoco.
 
 ## Status
 
