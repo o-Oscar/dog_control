@@ -13,6 +13,7 @@ class IdefX:
         self.motors_enabled = False
 
         self.sensor_reader = SensorReader()
+        # self.controller.set_sensor_reader (self.sensor_reader)
 
         self.target_loop_time = 1 / 30  # in s
 

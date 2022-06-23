@@ -1,8 +1,8 @@
 import abc
 import dataclasses
-import numpy as np
 import time
 
+import numpy as np
 
 
 class BaseController(abc.ABC):
@@ -10,8 +10,8 @@ class BaseController(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def _choose_action(self, state: RobotState) -> np.ndarray:
+    def _choose_action(self) -> np.ndarray:
         pass
 
-    def choose_action(self, state: RobotState) -> np.ndarray:
-        return self._choose_action(state)  # TODO : implement target position limitation here
+    def choose_action(self) -> np.ndarray:
+        return self._choose_action()  # TODO : implement target position limitation here

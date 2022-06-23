@@ -10,3 +10,4 @@
 __pycache__/
 
 MJDATA.TXT
+MUJOCO_LOG.TXT

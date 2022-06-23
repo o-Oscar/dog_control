@@ -1,7 +1,7 @@
 <mujoco model="cheetah">
-  <include file="./common/skybox.mjcf"/>
-  <include file="./common/visual.mjcf"/>
-  <include file="./common/materials.mjcf"/>
+  <include file="./common/skybox.xml"/>
+  <include file="./common/visual.xml"/>
+  <include file="./common/materials.xml"/>
 
   <compiler settotalmass="14"/>
 

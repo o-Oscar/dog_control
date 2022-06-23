@@ -1,0 +1,98 @@
+<?xml version="1.0" ?>
+<mujoco model="IdefX">
+	<include file="./common/skybox.xml"/>
+	<include file="./common/visual.xml"/>
+	<include file="./common/materials.xml"/>
+	<compiler settotalmass="17"/>
+	<default>
+		<default class="IdefX">
+			<joint limited="true" damping=".01" armature=".1" stiffness="8" type="hinge"/>
+			<geom contype="1" conaffinity="1" condim="3" friction=".4 .1 .1" material="self"/>
+		</default>
+		<default class="free">
+			<joint limited="false" damping="0" armature="0" stiffness="0"/>
+		</default>
+	</default>
+	<statistic center="0 0 .7" extent="2"/>
+	<option timestep="0.01"/>
+	<worldbody>
+		<geom name="ground" type="plane" conaffinity="1" pos="0 0 0" size="100 100 1" material="grid"/>
+		<body name="torso" pos="0 0 .7" childclass="IdefX">
+			<light name="light" pos="0 0 2" mode="trackcom"/>
+			<camera name="side" pos="0 -3 0" quat="0.707 0.707 0 0" mode="trackcom"/>
+			<camera name="back" pos="-1.8 -1.3 0.8" xyaxes="0.45 -0.9 0 0.3 0.15 0.94" mode="trackcom"/>
+			<geom name="torso" type="box" size="0.289 0.0675 0.05"/>
+			<joint name="torso" type="free" limited="false" stiffness="10000" damping="1000"/>
+			<body name="shoulder_fl" pos="0.225 0.0525 0">
+				<geom name="shoulder_motor_2_fl" type="cylinder" size="0.05 0.02" pos="0 0.028750000000000005 0" quat=".707 .707 0 0"/>
+				<joint name="shoulder_fl" range="-20 20" stiffness="240" damping="6" axis="1 0 0"/>
+				<body name="thigh_fl" pos="0 0.06875 0">
+					<geom name="thigh_fl" type="capsule" fromto="0 0 0 0 0 -.2" size=".02"/>
+					<geom name="shoulder_motor_fl" type="cylinder" size="0.05 0.02" pos="0 0.04 0" quat=".707 .707 0 0"/>
+					<joint name="thigh_fl" range="0 90" stiffness="240" damping="6" axis="0 1 0" springref="45"/>
+					<body name="lower_leg_fl" pos="0.0 0.0 -.2">
+						<geom name="lower_leg_fl" type="capsule" fromto="0 0 0 0 0 -.2" size=".02"/>
+						<joint name="lower_leg_fl" range="-135 0" stiffness="240" damping="6" axis="0 1 0" springref="-90"/>
+					</body>
+				</body>
+			</body>
+			<geom name="shoulder_motor_1_fl" type="cylinder" size="0.05 0.02" pos="0.14500000000000002 0.0525 0" quat=".707 0 .707 0"/>
+			<body name="shoulder_fr" pos="0.225 -0.0525 0">
+				<geom name="shoulder_motor_2_fr" type="cylinder" size="0.05 0.02" pos="0 -0.028750000000000005 0" quat=".707 .707 0 0"/>
+				<joint name="shoulder_fr" range="-20 20" stiffness="240" damping="6" axis="1 0 0"/>
+				<body name="thigh_fr" pos="0 -0.06875 0">
+					<geom name="thigh_fr" type="capsule" fromto="0 0 0 0 0 -.2" size=".02"/>
+					<geom name="shoulder_motor_fr" type="cylinder" size="0.05 0.02" pos="0 -0.04 0" quat=".707 .707 0 0"/>
+					<joint name="thigh_fr" range="0 90" stiffness="240" damping="6" axis="0 1 0" springref="45"/>
+					<body name="lower_leg_fr" pos="0.0 -0.0 -.2">
+						<geom name="lower_leg_fr" type="capsule" fromto="0 0 0 0 0 -.2" size=".02"/>
+						<joint name="lower_leg_fr" range="-135 0" stiffness="240" damping="6" axis="0 1 0" springref="-90"/>
+					</body>
+				</body>
+			</body>
+			<geom name="shoulder_motor_1_fr" type="cylinder" size="0.05 0.02" pos="0.14500000000000002 -0.0525 0" quat=".707 0 .707 0"/>
+			<body name="shoulder_bl" pos="-0.225 0.0525 0">
+				<geom name="shoulder_motor_2_bl" type="cylinder" size="0.05 0.02" pos="0 0.028750000000000005 0" quat=".707 .707 0 0"/>
+				<joint name="shoulder_bl" range="-20 20" stiffness="240" damping="6" axis="1 0 0"/>
+				<body name="thigh_bl" pos="0 0.06875 0">
+					<geom name="thigh_bl" type="capsule" fromto="0 0 0 0 0 -.2" size=".02"/>
+					<geom name="shoulder_motor_bl" type="cylinder" size="0.05 0.02" pos="0 0.04 0" quat=".707 .707 0 0"/>
+					<joint name="thigh_bl" range="0 90" stiffness="240" damping="6" axis="0 1 0" springref="45"/>
+					<body name="lower_leg_bl" pos="-0.0 0.0 -.2">
+						<geom name="lower_leg_bl" type="capsule" fromto="0 0 0 0 0 -.2" size=".02"/>
+						<joint name="lower_leg_bl" range="-135 0" stiffness="240" damping="6" axis="0 1 0" springref="-90"/>
+					</body>
+				</body>
+			</body>
+			<geom name="shoulder_motor_1_bl" type="cylinder" size="0.05 0.02" pos="-0.14500000000000002 0.0525 0" quat=".707 0 .707 0"/>
+			<body name="shoulder_br" pos="-0.225 -0.0525 0">
+				<geom name="shoulder_motor_2_br" type="cylinder" size="0.05 0.02" pos="0 -0.028750000000000005 0" quat=".707 .707 0 0"/>
+				<joint name="shoulder_br" range="-20 20" stiffness="240" damping="6" axis="1 0 0"/>
+				<body name="thigh_br" pos="0 -0.06875 0">
+					<geom name="thigh_br" type="capsule" fromto="0 0 0 0 0 -.2" size=".02"/>
+					<geom name="shoulder_motor_br" type="cylinder" size="0.05 0.02" pos="0 -0.04 0" quat=".707 .707 0 0"/>
+					<joint name="thigh_br" range="0 90" stiffness="240" damping="6" axis="0 1 0" springref="45"/>
+					<body name="lower_leg_br" pos="-0.0 -0.0 -.2">
+						<geom name="lower_leg_br" type="capsule" fromto="0 0 0 0 0 -.2" size=".02"/>
+						<joint name="lower_leg_br" range="-135 0" stiffness="240" damping="6" axis="0 1 0" springref="-90"/>
+					</body>
+				</body>
+			</body>
+			<geom name="shoulder_motor_1_br" type="cylinder" size="0.05 0.02" pos="-0.14500000000000002 -0.0525 0" quat=".707 0 .707 0"/>
+		</body>
+	</worldbody>
+	<actuator>
+		<motor name="shoulder_fl" joint="shoulder_fl" gear="240"/>
+		<motor name="thigh_fl" joint="thigh_fl" gear="240"/>
+		<motor name="lower_leg_fl" joint="lower_leg_fl" gear="240"/>
+		<motor name="shoulder_fr" joint="shoulder_fr" gear="240"/>
+		<motor name="thigh_fr" joint="thigh_fr" gear="240"/>
+		<motor name="lower_leg_fr" joint="lower_leg_fr" gear="240"/>
+		<motor name="shoulder_bl" joint="shoulder_bl" gear="240"/>
+		<motor name="thigh_bl" joint="thigh_bl" gear="240"/>
+		<motor name="lower_leg_bl" joint="lower_leg_bl" gear="240"/>
+		<motor name="shoulder_br" joint="shoulder_br" gear="240"/>
+		<motor name="thigh_br" joint="thigh_br" gear="240"/>
+		<motor name="lower_leg_br" joint="lower_leg_br" gear="240"/>
+	</actuator>
+</mujoco>
