@@ -23,3 +23,14 @@ TODO :
 A first version has been coded. Still needs to match the real robot.
 
 mujoco xml reference : https://mujoco.readthedocs.io/en/latest/XMLreference.html#xml-reference
+
+## Notes
+
+To scann the network for the raspberry :
+nmap -sn 192.168.1.0/24 | grep raspberrypi
+ssh pi@192.168.1.43
+To setup a network on the raspberry :
+sudo raspi-config
+System option
+Wireless LAN
+Enter Box name and password
