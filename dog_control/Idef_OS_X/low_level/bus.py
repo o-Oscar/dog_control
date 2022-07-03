@@ -1,10 +1,12 @@
+import dataclasses
+import struct
+
 import can
 import numpy as np
-import struct
-import dataclasses
 
 CHANNEL = "can0"
-BUSTYPE = "socketcan_native"
+# BUSTYPE = "socketcan_native"
+BUSTYPE = "socketcan"
 
 DEFAULT_MOTOR_SPEED = 10 * 360 * 6
 
@@ -93,6 +95,7 @@ class CANBus:
         bytes_speed = motor_speed.to_bytes(2, byteorder="little", signed=True)
 
         data = self.send(
+            motor_id,
             [
                 0xA4,
                 0,
@@ -103,14 +106,13 @@ class CANBus:
                 bytes_pos[2],
                 bytes_pos[3],
             ],
-            motor_id,
         )
 
     def get_actuator_pos(self, motor_id):
         """
         Returns the actuator position in radian.
         """
-        data = self.send([0x92, 0, 0, 0, 0, 0, 0, 0], motor_id)
+        data = self.send(motor_id, [0x92, 0, 0, 0, 0, 0, 0, 0])
         data[0] = 0
         return np.radians(struct.unpack("<q", data)[0] / 2**8 / 100 / 6)
 

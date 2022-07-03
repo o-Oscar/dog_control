@@ -20,11 +20,12 @@ def add_defaults(mujoco, config):
         idefX_default,
         "joint",
         {
-            "limited": "true",
+            # "limited": "true",
             "damping": ".01",
             "armature": ".1",
             "stiffness": "8",
             "type": "hinge",
+            "frictionloss": "0",
         },
     )
     ET.SubElement(
@@ -43,11 +44,17 @@ def add_defaults(mujoco, config):
     ET.SubElement(
         free_default,
         "joint",
-        {"limited": "false", "damping": "0", "armature": "0", "stiffness": "0"},
+        {
+            "limited": "false",
+            "damping": "0",
+            "armature": "0",
+            "stiffness": "0",
+            "frictionloss": "0",
+        },
     )
 
     # ET.SubElement(root, "motor", {"ctrllimited": "true", "ctrlrange": "-1 1"})
-    # ET.SubElement(root, "motor", {"forcelimited": "true", "forcerange": "-0.1 0.1"})
+    # ET.SubElement(root, "motor", {"forcelimited": "true", "forcerange": "-1 1"})
 
 
 def create_header(mujoco, config):
@@ -55,7 +62,7 @@ def create_header(mujoco, config):
     ET.SubElement(mujoco, "compiler", {"settotalmass": "17"})
     add_defaults(mujoco, config)
     ET.SubElement(mujoco, "statistic", {"center": "0 0 .7", "extent": "2"})
-    ET.SubElement(mujoco, "option", {"timestep": "0.01"})
+    ET.SubElement(mujoco, "option", {"timestep": "0.003333"})
 
 
 def create_ground(worldbody, config):
@@ -136,11 +143,11 @@ def create_lower_leg(thigh, leg_data, config):
         "joint",
         {
             "name": "lower_leg_" + leg_data["abbrev"],
-            "range": "-135 0",
+            # "range": "-135 0",
             "stiffness": config["joint_stiffness"],
             "damping": config["joint_damping"],
             "axis": "0 1 0",
-            "springref": "-90",
+            # "springref": "-90",
         },
     )
     return lower_leg
@@ -190,11 +197,11 @@ def create_thigh(shoulder, leg_data, config):
         "joint",
         {
             "name": "thigh_" + leg_data["abbrev"],
-            "range": "0 90",
-            "stiffness": "240",
-            "damping": "6",
+            # "range": "0 90",
+            "stiffness": config["joint_stiffness"],
+            "damping": config["joint_damping"],
             "axis": "0 1 0",
-            "springref": "45",
+            # "springref": "45",
         },
     )
 
@@ -249,9 +256,9 @@ def create_shoulder(torso, leg_data, config):
         "joint",
         {
             "name": "shoulder_" + leg_data["abbrev"],
-            "range": "-20 20",
-            "stiffness": "240",
-            "damping": "6",
+            # "range": "-20 20",
+            "stiffness": config["joint_stiffness"],
+            "damping": config["joint_damping"],
             "axis": "1 0 0",
         },
     )
@@ -392,8 +399,12 @@ def write_robot_to_file(fix_root):
     thigh_y = (leg_to_leg_outer + leg_to_leg_inner) / 4
     config["thigh_dy"] = thigh_y - config["shoulder_dy"]
 
-    config["joint_stiffness"] = "240"
-    config["joint_damping"] = "6"
+    motor_kp = 10 * 1
+    motor_kd = 30 * 1
+    stiffness = motor_kp * motor_kd * 1
+    joint_damping = motor_kd * 0.75
+    config["joint_stiffness"] = str(stiffness)
+    config["joint_damping"] = str(joint_damping)
 
     if fix_root:
         config["root_stiffness"] = "10000"

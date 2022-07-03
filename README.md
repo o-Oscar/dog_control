@@ -9,12 +9,15 @@ All the stuff you need to control a robot dog.
 Goal : having a simple controller that flings the motors around in sim and in real life.
 
 TODO :
--> Understand the motor commands and implement torque limits on the motors
--> Remove some lines to have a zero in the xml that is actually zero 
--> Remove limits to the motors in the xml
--> create a controller that makes little impulses toward the positiv direction of the motor to figure out the direction of each motor.
--> implement an inverting procedure to map actions to the right actuator direction
--> start the dog and figure out the "right actuator direction" for each actuator
+-> implement the control (PID + limit) of the actuator in simulation "by hand"
+-> test it against the logs
+-> find the best matching parameters
+
+-> read the imu data
+-> write a controller that keeps the feets under the dog.
+
+-> compute a "velocity" of the actuators
+-> write a base velocity estimator
 
 ## Status
 
@@ -28,6 +31,7 @@ mujoco xml reference : https://mujoco.readthedocs.io/en/latest/XMLreference.html
 
 To scann the network for the raspberry :
 nmap -sn 192.168.1.0/24 | grep raspberrypi
+nmap -sn 192.168.1.0/24 | sed -r -n -e 's/^.+raspberry.+\((.+)\)$/\1/p'
 ssh pi@192.168.1.43
 To setup a network on the raspberry :
 sudo raspi-config

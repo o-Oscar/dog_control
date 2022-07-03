@@ -1,6 +1,7 @@
 import time
-from msilib.schema import Error
+import traceback
 
+from dog_control.controllers.async_input import AsyncInput
 from dog_control.controllers.base import BaseController
 from dog_control.Idef_OS_X.low_level import bus, motor_handle
 from dog_control.Idef_OS_X.sensors import SensorReader
@@ -17,6 +18,8 @@ class IdefX:
 
         self.target_loop_time = 1 / 30  # in s
 
+        self.async_input = AsyncInput()
+
     def live(self):
         self.startup()
 
@@ -25,15 +28,21 @@ class IdefX:
         except BaseException as error:
             print("An exception occurred in the main loop :")
             print(error)
+            print(traceback.format_exc())
 
         self.shutdown()
 
     def main_loop(self):
         last_loop_timestamp = time.time()
 
+        frame = 0
+
         while True:
             self.sensor_reader.update_sensors()
-            target_pos = self.controller.choose_action()
+            target_pos = self.controller.choose_action(
+                frame,
+                motor_handle.get_motor_pos(),
+            )
 
             if self.motors_enabled:
                 motor_handle.go_to(target_pos)
@@ -44,13 +53,26 @@ class IdefX:
                 pass
             last_loop_timestamp = time.time()
 
+            if self.async_input.check_for_msg() == "q":
+                break
+
+            frame += 1
+
     def startup(self):
+        self.sensor_reader.init_sensors()
+
         if self.enable_motors:
             self.motors_enabled = True
 
-            self.sensor_reader.init_sensors()
+            bus.connect()
+            motor_handle.check_startable()
 
-            # TODO : define and go to the starting pose that the controller expects
+            target_pos = self.controller.choose_starting_action()
+            motor_handle.set_strong_pid()
+            motor_handle.go_to_slow(target_pos)
+            time.sleep(1)
+            motor_handle.set_lite_pid()
+            # time.sleep(1)
 
     def shutdown(self):
         if self.motors_enabled:
@@ -64,13 +86,11 @@ class IdefX:
             self.disengage()
 
     def stop(self):
-        motor_handle.set_lite_pid()
-        time.sleep(1)
-
-    def go_to_rest(self):
         motor_handle.set_strong_pid()
         motor_handle.go_to_zero()
         time.sleep(1)
+
+    def go_to_rest(self):
         motor_handle.go_to_rest()
         time.sleep(1)
 

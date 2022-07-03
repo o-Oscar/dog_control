@@ -22,6 +22,7 @@ class BaseEngine(abc.ABC):
 @dataclasses.dataclass
 class EngineConfig:
     fix_root: bool = False
+    use_viewer: bool = True
 
 
 # https://github.com/openai/mujoco-py/tree/master/examples
@@ -37,15 +38,21 @@ class Engine(BaseEngine):
 
         model = mujoco_py.load_model_from_path(str(DEFAULT_SRC_PATH))
         self.sim = mujoco_py.MjSim(model)
-        self.viewer = mujoco_py.MjViewer(self.sim)
-        self.viewer.render()
+
+        if self.config.use_viewer:
+            self.viewer = mujoco_py.MjViewer(self.sim)
+            self.viewer.render()
 
     def step(self, action):
-        print("updating engine")
+        # print("updating engine")
 
         self.sim.data.ctrl[:] = action[:]
-        # self.sim.data.ctrl[4] = np.pi / 4  #  * action[1]
-        print(self.sim.data.ctrl[:])
+        for i in range(10):
+            self.sim.step()
 
-        self.sim.step()
-        self.viewer.render()
+        if self.config.use_viewer:
+            self.viewer.render()
+
+    def get_motor_position(self):
+        to_return = self.sim.data.qpos[7 : 7 + 12]
+        return to_return
