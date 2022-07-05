@@ -139,7 +139,7 @@ class MotorHandle:
     def set_lite_pid(self):
         for motor_id in MOTOR_IDS:
             # self.bus.set_pid(motor_id, 15, 0, 35, 0, 50, 50) # kinda strong though
-            self.bus.set_pid(motor_id, 10, 0, 30, 0, 50, 50)
+            self.bus.set_pid(motor_id, 10, 0, 20, 0, 50, 50) # makeing this one work would be great
 
     def set_strong_pid(self):
         for motor_id in MOTOR_IDS:

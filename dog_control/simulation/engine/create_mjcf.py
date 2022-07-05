@@ -62,7 +62,7 @@ def create_header(mujoco, config):
     ET.SubElement(mujoco, "compiler", {"settotalmass": "17"})
     add_defaults(mujoco, config)
     ET.SubElement(mujoco, "statistic", {"center": "0 0 .7", "extent": "2"})
-    ET.SubElement(mujoco, "option", {"timestep": "0.003333"})
+    ET.SubElement(mujoco, "option", {"timestep": config["timestep"]})
 
 
 def create_ground(worldbody, config):
@@ -380,8 +380,12 @@ def create_file_tree(config):
 DEFAULT_SRC_PATH = Path(__file__).parent / "src" / "IdefX.xml"
 
 
-def write_robot_to_file(fix_root):
+def write_robot_to_file(fix_root, substeps, base_motor_kp, base_motor_kd):
     config = {}
+
+    step_dt = 1/30
+    substep_dt = step_dt / substeps
+    config["timestep"] = str(substep_dt)
 
     torso_size = [str(x / 2) for x in [0.578, 0.135, 0.100]]
     # torso_size = [str(x / 8) for x in [0.578, 0.135, 0.100]]
@@ -399,8 +403,8 @@ def write_robot_to_file(fix_root):
     thigh_y = (leg_to_leg_outer + leg_to_leg_inner) / 4
     config["thigh_dy"] = thigh_y - config["shoulder_dy"]
 
-    motor_kp = 10 * 1
-    motor_kd = 30 * 1
+    motor_kp = base_motor_kp * 1
+    motor_kd = base_motor_kd * 1
     stiffness = motor_kp * motor_kd * 1
     joint_damping = motor_kd * 0.75
     config["joint_stiffness"] = str(stiffness)

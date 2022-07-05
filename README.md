@@ -6,35 +6,50 @@ All the stuff you need to control a robot dog.
 
 ## TODO
 
-Goal : having a simple controller that flings the motors around in sim and in real life.
+Goal : having a controller with low PD gains that keeps the robot upright both in simulation and in real life.
 
 TODO :
--> implement the control (PID + limit) of the actuator in simulation "by hand"
--> test it against the logs
--> find the best matching parameters
 
--> read the imu data
--> write a controller that keeps the feets under the dog.
+- implement the control (PID + torque limit) of the actuator in simulation "by hand"
+- test it against the logs
+- find the best matching parameters
 
--> compute a "velocity" of the actuators
--> write a base velocity estimator
+Then
 
-## Status
+- write a controller that makes a motor track the current position (to mimick zero torque)
+- add a target limit to the motors in the base controller 
+- test the previous two in simulation (xfrc_applied to apply cartesian forces to a leg)
+- test the previous two in real life
 
-### mxml creation
+Then
 
-A first version has been coded. Still needs to match the real robot.
+- read the imu data
+- write a controller that keeps the feets under the dog.
 
-mujoco xml reference : https://mujoco.readthedocs.io/en/latest/XMLreference.html#xml-reference
+Then
+
+- compute a "velocity" of the actuators
+- write a base velocity estimator (one for each foot when we suppose it is fixed to the ground)
+
+Then
+
+- solve a least-square problem to compute the forces at the feets needed to put the dog back into balance (QP problem, use quadprog)
+- add the constraints that the forces must be over the ground
+- add the constraint that the torques at each motor must be smaller than some threshold
 
 ## Notes
 
-To scann the network for the raspberry :
-nmap -sn 192.168.1.0/24 | grep raspberrypi
-nmap -sn 192.168.1.0/24 | sed -r -n -e 's/^.+raspberry.+\((.+)\)$/\1/p'
-ssh pi@192.168.1.43
+### mujoco
+
+mujoco xml reference : https://mujoco.readthedocs.io/en/latest/XMLreference.html#xml-reference
+
+And the other very good one : https://mujoco.readthedocs.io/en/latest/APIreference.html#mjdata
+
+### raspberry
+
 To setup a network on the raspberry :
-sudo raspi-config
-System option
-Wireless LAN
-Enter Box name and password
+
+- sudo raspi-config
+- System option
+- Wireless LAN
+- Enter Box name and password
