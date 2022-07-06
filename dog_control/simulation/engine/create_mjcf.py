@@ -267,6 +267,17 @@ def create_shoulder(torso, leg_data, config):
 
 
 def create_robot(worldbody, config):
+    mocap_torso = ET.SubElement(
+        worldbody,
+        "body",
+        {
+            "name": "mocap_torso",
+            "mocap": "true",
+            "pos": "0 0 .7",
+            "childclass": "IdefX",
+        },
+    )
+
     torso = ET.SubElement(
         worldbody, "body", {"name": "torso", "pos": "0 0 .7", "childclass": "IdefX"}
     )
@@ -300,8 +311,6 @@ def create_robot(worldbody, config):
             "name": "torso",
             "type": "free",
             "limited": "false",
-            "stiffness": config["root_stiffness"],
-            "damping": config["root_damping"],
         },
     )
 
@@ -362,6 +371,15 @@ def create_actuators(mujoco, config):
         )
 
 
+def create_equalities(mujoco, config):
+    equality = ET.SubElement(mujoco, "equality")
+    ET.SubElement(
+        equality,
+        "weld",
+        {"name": "torso_weld", "body1": "torso", "body2": "mocap_torso"},
+    )
+
+
 def create_file_tree(config):
     mujoco = ET.Element("mujoco", {"model": "IdefX"})
     create_header(mujoco, config)
@@ -371,6 +389,9 @@ def create_file_tree(config):
     create_robot(worldbody, config)
 
     # create_actuators(mujoco, config)
+
+    if config["fix_root"]:
+        create_equalities(mujoco, config)
 
     # worldbody = ET.SubElement(mujoco, 'worldbody')
 
@@ -410,12 +431,7 @@ def write_robot_to_file(fix_root, substeps, base_motor_kp, base_motor_kd):
     config["joint_stiffness"] = str(stiffness)
     config["joint_damping"] = str(joint_damping)
 
-    if fix_root:
-        config["root_stiffness"] = "10000"
-        config["root_damping"] = "1000"
-    else:
-        config["root_stiffness"] = "0"
-        config["root_damping"] = "0"
+    config["fix_root"] = fix_root
 
     robot = create_file_tree(config)
 

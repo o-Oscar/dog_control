@@ -51,12 +51,20 @@ class BaseController(abc.ABC):
     def _choose_action(self) -> np.ndarray:
         pass
 
-    def choose_action(self, frame: int, cur_motor_positions: np.ndarray) -> np.ndarray:
+    def choose_action(
+        self,
+        frame: int,
+        cur_motor_positions: np.ndarray,
+        up_vector: np.ndarray,
+        rotation_speed: np.ndarray,
+    ) -> np.ndarray:
         self.cur_frame = frame
         self.cur_motor_positions = cur_motor_positions
+        self.up_vector = up_vector
+        self.rotation_speed = rotation_speed
 
         action = self._choose_action()
-        self.logger.log(action, cur_motor_positions)
+        self.logger.log(action, cur_motor_positions, up_vector, rotation_speed)
 
         cliped_action = np.clip(action, self.action_min, self.action_max)
         return cliped_action

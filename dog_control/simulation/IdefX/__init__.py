@@ -39,8 +39,10 @@ class IdefX:
             action = self.controller.choose_action(
                 frame,
                 self.simulation_engine.get_motor_position(),
+                self.simulation_engine.get_up_vector(),
+                self.simulation_engine.get_rotation_speed(),
             )
-            self.simulation_engine.step(action)
+            self.simulation_engine.step(frame, action)
 
             used_loop_time = (time.time() - last_loop_timestamp) / self.target_loop_time
             print("used loop time : {:.2f}%".format(100 * used_loop_time))

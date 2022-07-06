@@ -1,10 +1,11 @@
 import time
 import traceback
 
+import numpy as np
 from dog_control.controllers.async_input import AsyncInput
 from dog_control.controllers.base import BaseController
 from dog_control.Idef_OS_X.low_level import bus, motor_handle
-from dog_control.Idef_OS_X.sensors import SensorReader
+from dog_control.Idef_OS_X.sensors.imu import IMU
 
 
 class IdefX:
@@ -13,7 +14,7 @@ class IdefX:
         self.enable_motors = enable_motors
         self.motors_enabled = False
 
-        self.sensor_reader = SensorReader()
+        self.imu = IMU()
         # self.controller.set_sensor_reader (self.sensor_reader)
 
         self.target_loop_time = 1 / 30  # in s
@@ -38,10 +39,18 @@ class IdefX:
         frame = 0
 
         while True:
-            self.sensor_reader.update_sensors()
+            self.imu.update()
+
+            if self.motors_enabled:
+                cur_motor_pos = motor_handle.get_motor_pos()
+            else:
+                cur_motor_pos = np.zeros((12,))
+
             target_pos = self.controller.choose_action(
                 frame,
-                motor_handle.get_motor_pos(),
+                cur_motor_pos,
+                self.imu.up_vect,
+                self.imu.v_rot,
             )
 
             if self.motors_enabled:
@@ -59,8 +68,6 @@ class IdefX:
             frame += 1
 
     def startup(self):
-        self.sensor_reader.init_sensors()
-
         if self.enable_motors:
             self.motors_enabled = True
 
@@ -72,7 +79,6 @@ class IdefX:
             motor_handle.go_to_slow(target_pos)
             time.sleep(1)
             motor_handle.set_lite_pid()
-            # time.sleep(1)
 
     def shutdown(self):
         if self.motors_enabled:

@@ -8,7 +8,8 @@ All the stuff you need to control a robot dog.
 
 Goal : having a controller with low PD gains that keeps the robot upright both in simulation and in real life.
 
-- read the imu data
+- read the imu data on IdefX -> done
+- read the imu data in simulation -> done
 - write a controller that keeps the feets under the dog.
 
 Then

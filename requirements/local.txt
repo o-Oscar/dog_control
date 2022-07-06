@@ -3,3 +3,5 @@ mujoco-py
 python-can
 matplotlib
 pyqt5
+pyserial
+scipy

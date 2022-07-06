@@ -10,7 +10,7 @@ def main():
     # create the objects to control IdefX.
     idefX = IdefX(
         controller=ImpedanceController(),
-        enable_motors=True,
+        enable_motors=False,
     )
 
     # use the controller

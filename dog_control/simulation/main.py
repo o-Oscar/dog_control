@@ -8,6 +8,7 @@ from dog_control.controllers.positive_twitch import PositivTwitchController
 from dog_control.controllers.step_moves import StepMoveController
 from dog_control.simulation.engine import Engine, EngineConfig
 from dog_control.simulation.IdefX import IdefX
+from scipy.spatial.transform import Rotation as R
 
 
 def constant_force():
@@ -16,9 +17,21 @@ def constant_force():
     return to_return
 
 
+def rock_front_and_back(frame):
+    rx, ry = 0, 0
+    if frame < 500:
+        ry = np.pi / 4 * np.sin(frame / 500 * np.pi) ** 2
+    else:
+        rx = -np.pi / 4 * np.sin(frame / 500 * np.pi) ** 2
+    rot = R.from_euler("xyz", [rx, ry, 0])
+    scipy_quat = rot.as_quat()
+    target_rot = [scipy_quat[-1]] + list(scipy_quat[:-1])
+    return np.array(target_rot)
+
+
 def main():
 
-    realtime = True
+    realtime = False
 
     # create the objects to control IdefX.
     engine_config = EngineConfig(
@@ -27,7 +40,8 @@ def main():
         base_motor_kp=10,
         base_motor_kd=20,
         maximum_torque=11000000,
-        force_callback=constant_force,
+        force_callback=None,
+        target_base_rot_callback=rock_front_and_back,
     )
 
     idefX = IdefX(

@@ -1,5 +1,6 @@
 import abc
 import dataclasses
+from ast import Call
 from pathlib import Path
 from typing import Callable
 
@@ -9,6 +10,7 @@ from dog_control.simulation.engine.create_mjcf import (
     DEFAULT_SRC_PATH,
     write_robot_to_file,
 )
+from scipy.spatial.transform import Rotation as R
 
 
 class BaseEngine(abc.ABC):
@@ -16,7 +18,19 @@ class BaseEngine(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def step(self, action):
+    def step(self, frame, action):
+        pass
+
+    @abc.abstractmethod
+    def get_motor_position(self):
+        pass
+
+    @abc.abstractmethod
+    def get_up_vector(self):
+        pass
+
+    @abc.abstractmethod
+    def get_rotation_speed(self):
         pass
 
 
@@ -28,6 +42,7 @@ class EngineConfig:
     base_motor_kd: float = 0.0
     maximum_torque: float = 0.0
     force_callback: Callable = None
+    target_base_rot_callback: Callable = None
 
 
 # https://github.com/openai/mujoco-py/tree/master/examples
@@ -61,10 +76,13 @@ class Engine(BaseEngine):
         self.kd = motor_kd * 0.75
         self.maximum_torque = config.maximum_torque
 
-    def step(self, action):
-        # print("updating engine")
+    def step(self, frame, action):
 
         # self.sim.data.ctrl[:] = action[:]
+
+        if self.config.target_base_rot_callback is not None:
+            self.sim.data.mocap_quat[0, :] = self.config.target_base_rot_callback(frame)
+
         for i in range(10):
             leg_pd_torque = self.compute_pd_torque(action)
             if self.config.force_callback is not None:
@@ -86,3 +104,15 @@ class Engine(BaseEngine):
         torque = -(q - target_q) * self.kp - q_dot * self.kd
         torque = np.clip(torque, -self.maximum_torque, self.maximum_torque)
         return torque
+
+    def get_up_vector(self):
+        body_rotation = R.from_quat(
+            list(self.sim.data.qpos[4:7]) + [self.sim.data.qpos[3]]
+        )
+        return body_rotation.inv().apply(np.array([0, 0, 1]))
+
+    def get_rotation_speed(self):
+        body_rotation = R.from_quat(
+            list(self.sim.data.qpos[4:7]) + [self.sim.data.qpos[3]]
+        )
+        return body_rotation.inv().apply(self.sim.data.qvel[3:6])
