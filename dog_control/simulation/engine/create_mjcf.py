@@ -370,7 +370,7 @@ def create_file_tree(config):
     create_ground(worldbody, config)
     create_robot(worldbody, config)
 
-    create_actuators(mujoco, config)
+    # create_actuators(mujoco, config)
 
     # worldbody = ET.SubElement(mujoco, 'worldbody')
 
@@ -383,7 +383,7 @@ DEFAULT_SRC_PATH = Path(__file__).parent / "src" / "IdefX.xml"
 def write_robot_to_file(fix_root, substeps, base_motor_kp, base_motor_kd):
     config = {}
 
-    step_dt = 1/30
+    step_dt = 1 / 30
     substep_dt = step_dt / substeps
     config["timestep"] = str(substep_dt)
 

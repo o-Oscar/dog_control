@@ -13,7 +13,13 @@ def main():
     realtime = False
 
     # create the objects to control IdefX.
-    engine_config = EngineConfig(fix_root=True, use_viewer=realtime)
+    engine_config = EngineConfig(
+        fix_root=True,
+        use_viewer=realtime,
+        base_motor_kp=10,
+        base_motor_kd=20,
+        maximum_torque=11000000,
+    )
 
     # idefX = IdefX(
     #     controller=DummyController(),

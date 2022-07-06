@@ -10,12 +10,6 @@ Goal : having a controller with low PD gains that keeps the robot upright both i
 
 TODO :
 
-- implement the control (PID + torque limit) of the actuator in simulation "by hand"
-- test it against the logs
-- find the best matching parameters
-
-Then
-
 - write a controller that makes a motor track the current position (to mimick zero torque)
 - add a target limit to the motors in the base controller 
 - test the previous two in simulation (xfrc_applied to apply cartesian forces to a leg)
