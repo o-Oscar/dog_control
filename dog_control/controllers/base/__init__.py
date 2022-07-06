@@ -11,6 +11,42 @@ class BaseController(abc.ABC):
         self.logger = Logger()
         self.cur_frame = 0
 
+        self.action_min_degrees = np.array(
+            [
+                -20,
+                -45,
+                -45,
+                -20,
+                -45,
+                -45,
+                -20,
+                -45,
+                -45,
+                -20,
+                -45,
+                -45,
+            ]
+        )
+        self.action_max_degrees = np.array(
+            [
+                20,
+                45,
+                45,
+                20,
+                45,
+                45,
+                20,
+                45,
+                45,
+                20,
+                45,
+                45,
+            ]
+        )
+
+        self.action_min = np.radians(self.action_min_degrees)
+        self.action_max = np.radians(self.action_max_degrees)
+
     @abc.abstractmethod
     def _choose_action(self) -> np.ndarray:
         pass
@@ -21,13 +57,15 @@ class BaseController(abc.ABC):
 
         action = self._choose_action()
         self.logger.log(action, cur_motor_positions)
-        return action  # TODO : implement target position limitation here
+
+        cliped_action = np.clip(action, self.action_min, self.action_max)
+        return cliped_action
 
     @abc.abstractmethod
     def _choose_starting_action(self) -> np.ndarray:
         pass
 
     def choose_starting_action(self) -> np.ndarray:
-        return (
-            self._choose_starting_action()
-        )  # TODO : implement target position limitation here
+        starting_action = self._choose_starting_action()
+        cliped_action = np.clip(starting_action, self.action_min, self.action_max)
+        return cliped_action

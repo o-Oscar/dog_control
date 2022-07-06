@@ -8,15 +8,6 @@ All the stuff you need to control a robot dog.
 
 Goal : having a controller with low PD gains that keeps the robot upright both in simulation and in real life.
 
-TODO :
-
-- write a controller that makes a motor track the current position (to mimick zero torque)
-- add a target limit to the motors in the base controller 
-- test the previous two in simulation (xfrc_applied to apply cartesian forces to a leg)
-- test the previous two in real life
-
-Then
-
 - read the imu data
 - write a controller that keeps the feets under the dog.
 

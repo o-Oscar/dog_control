@@ -1,6 +1,7 @@
 import abc
 import dataclasses
 from pathlib import Path
+from typing import Callable
 
 import mujoco_py
 import numpy as np
@@ -26,6 +27,7 @@ class EngineConfig:
     base_motor_kp: float = 0.0
     base_motor_kd: float = 0.0
     maximum_torque: float = 0.0
+    force_callback: Callable = None
 
 
 # https://github.com/openai/mujoco-py/tree/master/examples
@@ -65,6 +67,8 @@ class Engine(BaseEngine):
         # self.sim.data.ctrl[:] = action[:]
         for i in range(10):
             leg_pd_torque = self.compute_pd_torque(action)
+            if self.config.force_callback is not None:
+                self.sim.data.xfrc_applied[:] = self.config.force_callback()
             self.sim.data.qfrc_applied[6:] = leg_pd_torque
             self.sim.step()
 

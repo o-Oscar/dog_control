@@ -1,6 +1,8 @@
 import re
 
+import numpy as np
 from dog_control.controllers.dummy import DummyController
+from dog_control.controllers.impedance_control import ImpedanceController
 from dog_control.controllers.position_reacher import PositionReacherController
 from dog_control.controllers.positive_twitch import PositivTwitchController
 from dog_control.controllers.step_moves import StepMoveController
@@ -8,9 +10,15 @@ from dog_control.simulation.engine import Engine, EngineConfig
 from dog_control.simulation.IdefX import IdefX
 
 
+def constant_force():
+    to_return = np.zeros((14, 6))
+    to_return[7, 0] = 100
+    return to_return
+
+
 def main():
 
-    realtime = False
+    realtime = True
 
     # create the objects to control IdefX.
     engine_config = EngineConfig(
@@ -19,14 +27,11 @@ def main():
         base_motor_kp=10,
         base_motor_kd=20,
         maximum_torque=11000000,
+        force_callback=constant_force,
     )
 
-    # idefX = IdefX(
-    #     controller=DummyController(),
-    #     simulation_engine=Engine(engine_config),
-    # )
     idefX = IdefX(
-        controller=StepMoveController(),
+        controller=ImpedanceController(),
         simulation_engine=Engine(engine_config),
         realtime=realtime,
     )
