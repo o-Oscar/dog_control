@@ -4,7 +4,7 @@ import numpy as np
 from dog_control.controllers.base import BaseController
 
 
-class StepMoveController(BaseController):
+class Controller(BaseController):
     def __init__(self):
         super().__init__()
         self.has_been_called = False

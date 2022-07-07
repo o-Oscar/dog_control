@@ -11,37 +11,25 @@ class BaseController(abc.ABC):
         self.logger = Logger()
         self.cur_frame = 0
 
+        SHOULDER_RANGE_DEGREES = 20
+        THIGH_RANGE_DEGREES = 45
+        LOWER_FOOT_RANGE_DEGREE = 90
+
         self.action_min_degrees = np.array(
             [
-                -20,
-                -45,
-                -45,
-                -20,
-                -45,
-                -45,
-                -20,
-                -45,
-                -45,
-                -20,
-                -45,
-                -45,
+                -SHOULDER_RANGE_DEGREES,
+                -THIGH_RANGE_DEGREES,
+                -LOWER_FOOT_RANGE_DEGREE,
             ]
+            * 4
         )
         self.action_max_degrees = np.array(
             [
-                20,
-                45,
-                45,
-                20,
-                45,
-                45,
-                20,
-                45,
-                45,
-                20,
-                45,
-                45,
+                SHOULDER_RANGE_DEGREES,
+                THIGH_RANGE_DEGREES,
+                LOWER_FOOT_RANGE_DEGREE,
             ]
+            * 4
         )
 
         self.action_min = np.radians(self.action_min_degrees)

@@ -1,6 +1,8 @@
 
 
+# sudo apt-get install python3.7
 # sudo apt-get install python3.7-dev
+# sudo apt-get install python3-venv
 python3.7 -m venv .venv
 
 # add the mujoco specific stuff to the env activate
