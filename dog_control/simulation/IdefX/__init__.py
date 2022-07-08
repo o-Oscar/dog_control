@@ -15,7 +15,8 @@ class IdefX:
 
         self.target_loop_time = 1 / 30
 
-        self.max_iteration = 1000
+        self.max_iteration = 600
+        # self.max_iteration = 1000
         # self.max_iteration = 100000
 
         self.async_input = AsyncInput()
@@ -29,8 +30,9 @@ class IdefX:
         self.shutdown()
 
     def startup(self):
+        target_pos = self.controller.choose_starting_action()
+        self.simulation_engine.set_motor_position(target_pos)
         # setup the dog in the simulation to be in the right orientation/position for the current test
-        pass
 
     def main_loop(self):
 

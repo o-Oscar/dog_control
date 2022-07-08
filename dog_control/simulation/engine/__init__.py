@@ -6,10 +6,8 @@ from typing import Callable
 
 import mujoco_py
 import numpy as np
-from dog_control.simulation.engine.create_mjcf import (
-    DEFAULT_SRC_PATH,
-    write_robot_to_file,
-)
+from dog_control.simulation.engine.create_mjcf import (DEFAULT_SRC_PATH,
+                                                       write_robot_to_file)
 from scipy.spatial.transform import Rotation as R
 
 
@@ -19,6 +17,10 @@ class BaseEngine(abc.ABC):
 
     @abc.abstractmethod
     def step(self, frame, action):
+        pass
+
+    @abc.abstractmethod
+    def set_motor_position(self):
         pass
 
     @abc.abstractmethod
@@ -37,12 +39,14 @@ class BaseEngine(abc.ABC):
 @dataclasses.dataclass
 class EngineConfig:
     fix_root: bool = False
+    fix_feets: bool = False
     use_viewer: bool = True
     base_motor_kp: float = 0.0
     base_motor_kd: float = 0.0
     maximum_torque: float = 0.0
     force_callback: Callable = None
-    target_base_rot_callback: Callable = None
+    mocap_pos_callback: Callable = None
+    mocap_rot_callback: Callable = None
 
 
 # https://github.com/openai/mujoco-py/tree/master/examples
@@ -58,6 +62,7 @@ class Engine(BaseEngine):
 
         write_robot_to_file(
             fix_root=self.config.fix_root,
+            fix_feets=self.config.fix_feets,
             substeps=self.substeps,
             base_motor_kp=0,
             base_motor_kd=0,
@@ -77,12 +82,13 @@ class Engine(BaseEngine):
         self.maximum_torque = config.maximum_torque
 
     def step(self, frame, action):
+        if self.config.mocap_pos_callback is not None:
+            self.sim.data.mocap_pos[:] = self.config.mocap_pos_callback(frame)
 
-        # self.sim.data.ctrl[:] = action[:]
+        if self.config.mocap_rot_callback is not None:
+            self.sim.data.mocap_quat[:] = self.config.mocap_rot_callback(frame)
 
-        if self.config.target_base_rot_callback is not None:
-            self.sim.data.mocap_quat[0, :] = self.config.target_base_rot_callback(frame)
-
+            
         for i in range(10):
             leg_pd_torque = self.compute_pd_torque(action)
             if self.config.force_callback is not None:
@@ -92,6 +98,9 @@ class Engine(BaseEngine):
 
         if self.config.use_viewer:
             self.viewer.render()
+
+    def set_motor_position(self, motor_positions):
+        self.sim.data.qpos[7:] = motor_positions
 
     def get_motor_position(self):
         to_return = self.sim.data.qpos[7:]

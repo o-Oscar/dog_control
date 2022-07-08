@@ -27,16 +27,25 @@ if False:
 if True:
     log_path = "logs/local/log1"
     local_log = get_all_logs(log_path)
+    print(local_log.keys())
 
     log_path = "logs/dog/log1"
     dog_log = get_all_logs(log_path)
 
     # print(np.sum(log.motor_positions))
+    # plt.figure()
+    # plt.plot(local_log["estimated_motor_velocity"])
     plt.figure()
-    plt.plot(local_log.up_vectors[:])
-    plt.plot(dog_log.up_vectors[:])
-    plt.figure()
-    plt.plot(local_log.rotation_speeds[:])
-    plt.plot(dog_log.rotation_speeds[:])
+    # plt.plot(local_log["estimated_base_velocity"][:, :3])
+    plt.plot(dog_log["base_velocity_global"])
+    # plt.plot(local_log["estimated_foot_pos"][:, :3])
+    # plt.plot(
+    #     local_log["estimated_base_velocity"][:, 2]
+    #     / local_log["estimated_base_velocity"][:, 1]
+    # )
+    # plt.plot(dog_log["up_vectors"])
+    # plt.figure()
+    # plt.plot(local_log["rotation_speed"])
+    # plt.plot(dog_log["rotation_speeds"])
 
     plt.show()

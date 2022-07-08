@@ -3,7 +3,7 @@
 	<include file="./common/skybox.xml"/>
 	<include file="./common/visual.xml"/>
 	<include file="./common/materials.xml"/>
-	<compiler settotalmass="17"/>
+	<compiler coordinate="local" settotalmass="17"/>
 	<default>
 		<default class="IdefX">
 			<joint armature=".1" damping=".01" frictionloss="0" stiffness="8" type="hinge"/>
@@ -18,6 +18,10 @@
 	<worldbody>
 		<geom conaffinity="1" material="grid" name="ground" pos="0 0 0" size="100 100 1" type="plane"/>
 		<body childclass="IdefX" mocap="true" name="mocap_torso" pos="0 0 .7"/>
+		<body childclass="IdefX" mocap="true" name="mocap_lower_leg_fl" pos="0 0 0"/>
+		<body childclass="IdefX" mocap="true" name="mocap_lower_leg_fr" pos="0 0 0"/>
+		<body childclass="IdefX" mocap="true" name="mocap_lower_leg_bl" pos="0 0 0"/>
+		<body childclass="IdefX" mocap="true" name="mocap_lower_leg_br" pos="0 0 0"/>
 		<body childclass="IdefX" name="torso" pos="0 0 .7">
 			<light mode="trackcom" name="light" pos="0 0 2"/>
 			<camera mode="trackcom" name="side" pos="0 -3 0" quat="0.707 0.707 0 0"/>
@@ -84,5 +88,9 @@
 	</worldbody>
 	<equality>
 		<weld body1="torso" body2="mocap_torso" name="torso_weld"/>
+		<connect anchor="0 0 -0.2" body1="lower_leg_fl" body2="mocap_lower_leg_fl" name="connect_fl"/>
+		<connect anchor="0 0 -0.2" body1="lower_leg_fr" body2="mocap_lower_leg_fr" name="connect_fr"/>
+		<connect anchor="0 0 -0.2" body1="lower_leg_bl" body2="mocap_lower_leg_bl" name="connect_bl"/>
+		<connect anchor="0 0 -0.2" body1="lower_leg_br" body2="mocap_lower_leg_br" name="connect_br"/>
 	</equality>
 </mujoco>

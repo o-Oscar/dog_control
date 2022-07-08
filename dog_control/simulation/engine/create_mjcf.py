@@ -59,7 +59,7 @@ def add_defaults(mujoco, config):
 
 def create_header(mujoco, config):
     add_commons(mujoco, config)
-    ET.SubElement(mujoco, "compiler", {"settotalmass": "17"})
+    ET.SubElement(mujoco, "compiler", {"settotalmass": "17", "coordinate": "local"})
     add_defaults(mujoco, config)
     ET.SubElement(mujoco, "statistic", {"center": "0 0 .7", "extent": "2"})
     ET.SubElement(mujoco, "option", {"timestep": config["timestep"]})
@@ -267,7 +267,7 @@ def create_shoulder(torso, leg_data, config):
 
 
 def create_robot(worldbody, config):
-    mocap_torso = ET.SubElement(
+    ET.SubElement(
         worldbody,
         "body",
         {
@@ -277,6 +277,17 @@ def create_robot(worldbody, config):
             "childclass": "IdefX",
         },
     )
+    for abbrev in ["fl", "fr", "bl", "br"]:
+        ET.SubElement(
+            worldbody,
+            "body",
+            {
+                "name": "mocap_lower_leg_" + abbrev,
+                "mocap": "true",
+                "pos": "0 0 0",
+                "childclass": "IdefX",
+            },
+        )
 
     torso = ET.SubElement(
         worldbody, "body", {"name": "torso", "pos": "0 0 .7", "childclass": "IdefX"}
@@ -373,11 +384,26 @@ def create_actuators(mujoco, config):
 
 def create_equalities(mujoco, config):
     equality = ET.SubElement(mujoco, "equality")
-    ET.SubElement(
-        equality,
-        "weld",
-        {"name": "torso_weld", "body1": "torso", "body2": "mocap_torso"},
-    )
+    if config["fix_root"]:
+        ET.SubElement(
+            equality,
+            "weld",
+            {"name": "torso_weld", "body1": "torso", "body2": "mocap_torso"},
+        )
+    if config["fix_feets"]:
+        abbrevs = ["fl", "fr", "bl", "br"]
+
+        for abbrev in abbrevs:
+            ET.SubElement(
+                equality,
+                "connect",
+                {
+                    "name": "connect_" + abbrev,
+                    "body1": "lower_leg_" + abbrev,
+                    "body2": "mocap_lower_leg_" + abbrev,
+                    "anchor": "0 0 -0.2",
+                },
+            )
 
 
 def create_file_tree(config):
@@ -390,7 +416,7 @@ def create_file_tree(config):
 
     # create_actuators(mujoco, config)
 
-    if config["fix_root"]:
+    if config["fix_root"] or config["fix_feets"]:
         create_equalities(mujoco, config)
 
     # worldbody = ET.SubElement(mujoco, 'worldbody')
@@ -401,7 +427,7 @@ def create_file_tree(config):
 DEFAULT_SRC_PATH = Path(__file__).parent / "src" / "IdefX.xml"
 
 
-def write_robot_to_file(fix_root, substeps, base_motor_kp, base_motor_kd):
+def write_robot_to_file(fix_root, fix_feets, substeps, base_motor_kp, base_motor_kd):
     config = {}
 
     step_dt = 1 / 30
@@ -432,6 +458,7 @@ def write_robot_to_file(fix_root, substeps, base_motor_kp, base_motor_kd):
     config["joint_damping"] = str(joint_damping)
 
     config["fix_root"] = fix_root
+    config["fix_feets"] = fix_feets
 
     robot = create_file_tree(config)
 
