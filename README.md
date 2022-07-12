@@ -8,9 +8,28 @@ All the stuff you need to control a robot dog.
 
 Goal : having a controller with low PD gains that keeps the robot upright both in simulation and in real life.
 
+- calculer une estimation des torques que les moteurs ont appliqués à la dernière boucle.
+    - calculer kp * delta_pos + kd * estimated_vitesse
+    - cliper les torques (mesurer les torques max que les joints peuvent appliquer)
+- calculer une estimation des forces que les pieds ont appliquées à la dernière boucle
+    - /!\ ne marche que à l'extérieur des singularités -> mettre un flag quand on approche d'une singularité
+- faire un estimateur de quand le chien est posé par terre ou non (somme des forces en Z plus grand qu'un certain seuil). 
+- tester ça en simulation
+    - en faisant descendre le chien au fur et à mesure
+    - en désactivant de la contrainte de mocap
+- tester ça en vrai
+
+Then
+
+- faire le bout de code qui transforme la force désirée au niveau d'un pied à une target en position.
+    - On a : longueur vectoriel force égal moment (cross(L,F)=M) pour tous les joints
+    - On projette le moment dans ce que peux faire le joint. On clip le moment dans un truc que le joint peut faire.
+    - On déduit un delta de position target (en prenant en compte le kp différent pour chaque joint)
 - solve a least-square problem to compute the forces at the feets needed to put the dog back into balance (QP problem, use quadprog) (need to think about what we want as force / torque applied on the main body)
+    - calculer ce qu'on veut comme force/torque en fonction de l'orientation/vitesse de rotation du torse
+    - commencer par contraindre un seul axe ? -> J'aimerai pouvoir mettre les axes uns par uns (hauteur, puis tanguage, puis déplacement d'avant en arrière en utilisant uniquement les moteurs des hip et des lower leg ?)
 - add the constraints that the forces must be over the ground
-- add the constraint that the torques at each motor must be smaller than some threshold
+- add the constraint that the torques at each motor must be smaller than some threshold (measure the max torque for each motor)
 
 ## Notes
 
