@@ -266,7 +266,7 @@ def create_shoulder(torso, leg_data, config):
     return shoulder
 
 
-def create_robot(worldbody, config):
+def create_mocap(worldbody, config):
     ET.SubElement(
         worldbody,
         "body",
@@ -289,6 +289,11 @@ def create_robot(worldbody, config):
             },
         )
 
+
+def create_robot(worldbody, config):
+
+    create_mocap(worldbody, config)
+
     torso = ET.SubElement(
         worldbody, "body", {"name": "torso", "pos": "0 0 .7", "childclass": "IdefX"}
     )
@@ -303,17 +308,6 @@ def create_robot(worldbody, config):
             "size": config["torso_size"],
         },
     )
-
-    # ET.SubElement(
-    #     torso,
-    #     "geom",
-    #     {
-    #         "name": "batteries",
-    #         "type": "capsule",
-    #         "fromto": "-.1 0 .04 .1 0 .04",
-    #         "size": "0.08",
-    #     },
-    # )
 
     ET.SubElement(
         torso,
@@ -419,8 +413,6 @@ def create_file_tree(config):
     if config["fix_root"] or config["fix_feets"]:
         create_equalities(mujoco, config)
 
-    # worldbody = ET.SubElement(mujoco, 'worldbody')
-
     return mujoco
 
 
@@ -449,13 +441,6 @@ def write_robot_to_file(fix_root, fix_feets, substeps, base_motor_kp, base_motor
     leg_to_leg_inner = 0.200
     thigh_y = (leg_to_leg_outer + leg_to_leg_inner) / 4
     config["thigh_dy"] = thigh_y - config["shoulder_dy"]
-
-    motor_kp = base_motor_kp * 1
-    motor_kd = base_motor_kd * 1
-    stiffness = motor_kp * motor_kd * 1
-    joint_damping = motor_kd * 0.75
-    config["joint_stiffness"] = str(stiffness)
-    config["joint_damping"] = str(joint_damping)
 
     config["fix_root"] = fix_root
     config["fix_feets"] = fix_feets

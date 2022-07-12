@@ -4,6 +4,7 @@ from ast import Call
 from pathlib import Path
 from typing import Callable
 
+import dog_control.controllers.estimator.geometry as geom
 import mujoco_py
 import numpy as np
 from dog_control.simulation.engine.create_mjcf import (DEFAULT_SRC_PATH,
@@ -41,10 +42,8 @@ class EngineConfig:
     fix_root: bool = False
     fix_feets: bool = False
     use_viewer: bool = True
-    base_motor_kp: float = 0.0
-    base_motor_kd: float = 0.0
-    maximum_torque: float = 0.0
     force_callback: Callable = None
+    mocap_activation: Callable = None
     mocap_pos_callback: Callable = None
     mocap_rot_callback: Callable = None
 
@@ -75,20 +74,18 @@ class Engine(BaseEngine):
             self.viewer = mujoco_py.MjViewer(self.sim)
             self.viewer.render()
 
-        motor_kp = config.base_motor_kp * 1
-        motor_kd = config.base_motor_kd * 1 * 0.5
-        self.kp = motor_kp * motor_kd * 1
-        self.kd = motor_kd * 0.75
-        self.maximum_torque = config.maximum_torque
-
     def step(self, frame, action):
+
+        if self.config.mocap_activation is not None:
+            self.sim.data.eq_active[:] = self.config.mocap_activation(frame)
+            self.sim.model.eq_active[:] = self.config.mocap_activation(frame)
+
         if self.config.mocap_pos_callback is not None:
             self.sim.data.mocap_pos[:] = self.config.mocap_pos_callback(frame)
 
         if self.config.mocap_rot_callback is not None:
             self.sim.data.mocap_quat[:] = self.config.mocap_rot_callback(frame)
 
-            
         for i in range(10):
             leg_pd_torque = self.compute_pd_torque(action)
             if self.config.force_callback is not None:
@@ -110,8 +107,8 @@ class Engine(BaseEngine):
         q = self.sim.data.qpos[7:]
         q_dot = self.sim.data.qvel[6:]
 
-        torque = -(q - target_q) * self.kp - q_dot * self.kd
-        torque = np.clip(torque, -self.maximum_torque, self.maximum_torque)
+        torque = -geom.KP * (q - target_q) - geom.KD * q_dot
+        torque = np.clip(torque, -geom.MAX_TORQUE, geom.MAX_TORQUE)
         return torque
 
     def get_up_vector(self):

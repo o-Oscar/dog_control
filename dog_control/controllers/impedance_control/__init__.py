@@ -2,7 +2,6 @@ import time
 
 import numpy as np
 from dog_control.controllers.base import BaseController
-from dog_control.controllers.velocity_estimator import VelocityEstimator
 
 
 class Controller(BaseController):
@@ -12,14 +11,8 @@ class Controller(BaseController):
         self.has_been_called = False
         self.dt = 1 / 30
 
-        self.velocity_estimator = VelocityEstimator(self.logger)
-
     def _choose_action(self) -> np.ndarray:
         target_position = np.zeros((12,))
-
-        self.velocity_estimator.estimate(
-            self.cur_motor_positions, self.up_vector, self.rotation_speed
-        )
 
         for leg_id in range(4):
             # target_position[leg_id * 3 + 0] = self.cur_motor_positions[leg_id * 3 + 0]

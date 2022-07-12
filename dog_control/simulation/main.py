@@ -57,9 +57,10 @@ def mocap_rot_callback(frame):
 def mocap_pos_callback(frame):
     to_return = np.zeros((5, 3))
 
-    base_pos = np.array([sine(frame, 3, 0.2), 0, 0.7])
+    # base_pos = np.array([sine(frame, 3, 0.2), 0, 0.7])
+    base_pos = np.array([0, 0, 0.4])
 
-    foot_pos = np.array([0, 0, 0.1])
+    foot_pos = np.array([0, 0, 0])
 
     to_return[0] = base_pos
     to_return[1] = foot_pos
@@ -67,6 +68,12 @@ def mocap_pos_callback(frame):
     to_return[3] = foot_pos
     to_return[4] = foot_pos
 
+    return to_return
+
+
+def mocap_activation(frame):
+    to_return = np.zeros((5,))
+    to_return[0] = 1 if frame < 60 else 0
     return to_return
 
 
@@ -79,12 +86,13 @@ def main():
         fix_root=True,
         fix_feets=True,
         use_viewer=realtime,
-        base_motor_kp=10,
-        base_motor_kd=20,
-        maximum_torque=11000000,
         force_callback=None,
+        # mocap_activation=None,  # for in the air tests
+        # mocap_pos_callback=mocap_pos_callback,
+        # mocap_rot_callback=mocap_rot_callback,
+        mocap_activation=mocap_activation,  # for tests with the ground
         mocap_pos_callback=mocap_pos_callback,
-        mocap_rot_callback=mocap_rot_callback,
+        mocap_rot_callback=None,
     )
 
     idefX = IdefX(

@@ -3,6 +3,7 @@ import dataclasses
 import time
 
 import numpy as np
+from dog_control.controllers.estimator import Estimator
 from dog_control.controllers.logger import Logger
 
 
@@ -13,6 +14,8 @@ class BaseController(abc.ABC):
         self.logger.add_entry("cur_motor_positions", 12)
         self.logger.add_entry("up_vector", 3)
         self.logger.add_entry("rotation_speed", 3)
+
+        self.estimator = Estimator(self.logger)
 
         self.cur_frame = 0
 
@@ -56,8 +59,16 @@ class BaseController(abc.ABC):
         self.up_vector = up_vector
         self.rotation_speed = rotation_speed
 
+        self.estimator.estimate(
+            self.last_target_motor_positions,
+            self.cur_motor_positions,
+            self.up_vector,
+            self.rotation_speed,
+        )
+
         action = self._choose_action()
         cliped_action = np.clip(action, self.action_min, self.action_max)
+        self.last_target_motor_positions = cliped_action
 
         self.logger["action"] = cliped_action
         self.logger["cur_motor_positions"] = cur_motor_positions
@@ -74,4 +85,5 @@ class BaseController(abc.ABC):
     def choose_starting_action(self) -> np.ndarray:
         starting_action = self._choose_starting_action()
         cliped_action = np.clip(starting_action, self.action_min, self.action_max)
+        self.last_target_motor_positions = cliped_action
         return cliped_action

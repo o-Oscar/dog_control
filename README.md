@@ -8,16 +8,17 @@ All the stuff you need to control a robot dog.
 
 Goal : having a controller with low PD gains that keeps the robot upright both in simulation and in real life.
 
-- calculer une estimation des torques que les moteurs ont appliqués à la dernière boucle.
-    - calculer kp * delta_pos + kd * estimated_vitesse
-    - cliper les torques (mesurer les torques max que les joints peuvent appliquer)
-- calculer une estimation des forces que les pieds ont appliquées à la dernière boucle
+- calculer une estimation des torques que les moteurs ont appliqués à la dernière boucle. -> done
+    - calculer kp * delta_pos + kd * estimated_vitesse -> done
+    - cliper les torques (mesurer les torques max que les joints peuvent appliquer) -> done
+- calculer une estimation des forces que les pieds ont appliquées à la dernière boucle -> done
     - /!\ ne marche que à l'extérieur des singularités -> mettre un flag quand on approche d'une singularité
+    - /!\ On suppose qu'on est en régime quasi-statique -> ne peut pas être utilisé quand le chien commence à bouger (masse * accélération de la patte grand). 
 - faire un estimateur de quand le chien est posé par terre ou non (somme des forces en Z plus grand qu'un certain seuil). 
-- tester ça en simulation
-    - en faisant descendre le chien au fur et à mesure
-    - en désactivant de la contrainte de mocap
-- tester ça en vrai
+- tester ça en simulation (on se dit que ça marche si la somme des forces compense la gravité)
+    - en faisant descendre le chien au fur et à mesure -> ??
+    - en désactivant de la contrainte de mocap -> en cours
+- tester le tout en vrai (on se dit que ça marche si la somme des forces compense la gravité)
 
 Then
 
