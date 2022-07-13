@@ -54,11 +54,22 @@ def mocap_rot_callback(frame):
     return to_return
 
 
+def mocap_rot_callback(frame):
+    rot = R.from_euler("xyz", [0, 0, 0])
+    scipy_quat = rot.as_quat()
+    target_rot = [scipy_quat[-1]] + list(scipy_quat[:-1])
+
+    to_return = np.zeros((5, 4))
+    to_return[0] = np.array(target_rot)
+    # to_return[0] = bank_angle(frame)
+    return to_return
+
+
 def mocap_pos_callback(frame):
     to_return = np.zeros((5, 3))
 
     # base_pos = np.array([sine(frame, 3, 0.2), 0, 0.7])
-    base_pos = np.array([0, 0, 0.4])
+    base_pos = np.array([0, 0, 0.4 - frame * 0.1 / 600])
 
     foot_pos = np.array([0, 0, 0])
 
@@ -73,7 +84,7 @@ def mocap_pos_callback(frame):
 
 def mocap_activation(frame):
     to_return = np.zeros((5,))
-    to_return[0] = 1 if frame < 60 else 0
+    to_return[0] = 1 if frame < 6 else 0
     return to_return
 
 
@@ -92,7 +103,7 @@ def main():
         # mocap_rot_callback=mocap_rot_callback,
         mocap_activation=mocap_activation,  # for tests with the ground
         mocap_pos_callback=mocap_pos_callback,
-        mocap_rot_callback=None,
+        mocap_rot_callback=mocap_rot_callback,
     )
 
     idefX = IdefX(
@@ -106,6 +117,4 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
-    # x = a sin(frame / period / 30 * np.pi * 2)
-    print(0.2 * np.pi * 2 / 3)
+    main()

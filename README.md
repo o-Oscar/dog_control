@@ -17,8 +17,15 @@ Goal : having a controller with low PD gains that keeps the robot upright both i
 - faire un estimateur de quand le chien est posé par terre ou non (somme des forces en Z plus grand qu'un certain seuil). 
 - tester ça en simulation (on se dit que ça marche si la somme des forces compense la gravité)
     - en faisant descendre le chien au fur et à mesure -> ??
-    - en désactivant de la contrainte de mocap -> en cours
+    - en désactivant de la contrainte de mocap -> done
 - tester le tout en vrai (on se dit que ça marche si la somme des forces compense la gravité)
+
+Then
+
+- Retravailler un peu le controller impedance_control :
+    - ajouter un terme de vitesse : target position = current_position + dt * current_velocity -> ça devrait pas changer beaucoup de choses
+- Tester en simulation
+- Tester en vrai
 
 Then
 

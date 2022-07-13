@@ -6,8 +6,8 @@
 	<compiler coordinate="local" settotalmass="17"/>
 	<default>
 		<default class="IdefX">
-			<joint armature=".1" damping=".01" frictionloss="0" stiffness="8" type="hinge"/>
-			<geom conaffinity="1" condim="3" contype="1" friction=".4 .1 .1" material="self"/>
+			<joint armature=".1" damping=".001" frictionloss="0" stiffness="0" type="hinge"/>
+			<geom conaffinity="1" condim="3" contype="1" friction="0.3 0.005 0.0001" material="self"/>
 		</default>
 		<default class="free">
 			<joint armature="0" damping="0" frictionloss="0" limited="false" stiffness="0"/>
@@ -16,7 +16,7 @@
 	<statistic center="0 0 .7" extent="2"/>
 	<option timestep="0.003333333333333333"/>
 	<worldbody>
-		<geom conaffinity="1" material="grid" name="ground" pos="0 0 0" size="100 100 1" type="plane"/>
+		<geom conaffinity="1" friction=".3 0.005 0.0001" material="grid" name="ground" pos="0 0 0" size="100 100 1" type="plane"/>
 		<body childclass="IdefX" mocap="true" name="mocap_torso" pos="0 0 .7"/>
 		<body childclass="IdefX" mocap="true" name="mocap_lower_leg_fl" pos="0 0 0"/>
 		<body childclass="IdefX" mocap="true" name="mocap_lower_leg_fr" pos="0 0 0"/>
@@ -30,56 +30,60 @@
 			<joint limited="false" name="torso" type="free"/>
 			<body name="shoulder_fl" pos="0.225 0.0525 0">
 				<geom name="shoulder_motor_2_fl" pos="0 0.028750000000000005 0" quat=".707 .707 0 0" size="0.05 0.02" type="cylinder"/>
-				<joint axis="1 0 0" damping="0.0" name="shoulder_fl" stiffness="0"/>
+				<joint axis="1 0 0" name="shoulder_fl"/>
 				<body name="thigh_fl" pos="0 0.06875 0">
 					<geom fromto="0 0 0 0 0 -.2" name="thigh_fl" size=".02" type="capsule"/>
 					<geom name="shoulder_motor_fl" pos="0 0.04 0" quat=".707 .707 0 0" size="0.05 0.02" type="cylinder"/>
-					<joint axis="0 1 0" damping="0.0" name="thigh_fl" stiffness="0"/>
+					<joint axis="0 1 0" name="thigh_fl"/>
 					<body name="lower_leg_fl" pos="0.0 0.0 -.2">
-						<geom fromto="0 0 0 0 0 -.2" name="lower_leg_fl" size=".02" type="capsule"/>
-						<joint axis="0 1 0" damping="0.0" name="lower_leg_fl" stiffness="0"/>
+						<geom fromto="0 0 0 0 0 -.2" name="lower_leg_fl" size=".01" type="capsule"/>
+						<geom name="foot_fl" pos="0 0 -.2" size=".02 .01 .02" type="ellipsoid"/>
+						<joint axis="0 1 0" name="lower_leg_fl"/>
 					</body>
 				</body>
 			</body>
 			<geom name="shoulder_motor_1_fl" pos="0.14500000000000002 0.0525 0" quat=".707 0 .707 0" size="0.05 0.02" type="cylinder"/>
 			<body name="shoulder_fr" pos="0.225 -0.0525 0">
 				<geom name="shoulder_motor_2_fr" pos="0 -0.028750000000000005 0" quat=".707 .707 0 0" size="0.05 0.02" type="cylinder"/>
-				<joint axis="1 0 0" damping="0.0" name="shoulder_fr" stiffness="0"/>
+				<joint axis="1 0 0" name="shoulder_fr"/>
 				<body name="thigh_fr" pos="0 -0.06875 0">
 					<geom fromto="0 0 0 0 0 -.2" name="thigh_fr" size=".02" type="capsule"/>
 					<geom name="shoulder_motor_fr" pos="0 -0.04 0" quat=".707 .707 0 0" size="0.05 0.02" type="cylinder"/>
-					<joint axis="0 1 0" damping="0.0" name="thigh_fr" stiffness="0"/>
+					<joint axis="0 1 0" name="thigh_fr"/>
 					<body name="lower_leg_fr" pos="0.0 -0.0 -.2">
-						<geom fromto="0 0 0 0 0 -.2" name="lower_leg_fr" size=".02" type="capsule"/>
-						<joint axis="0 1 0" damping="0.0" name="lower_leg_fr" stiffness="0"/>
+						<geom fromto="0 0 0 0 0 -.2" name="lower_leg_fr" size=".01" type="capsule"/>
+						<geom name="foot_fr" pos="0 0 -.2" size=".02 .01 .02" type="ellipsoid"/>
+						<joint axis="0 1 0" name="lower_leg_fr"/>
 					</body>
 				</body>
 			</body>
 			<geom name="shoulder_motor_1_fr" pos="0.14500000000000002 -0.0525 0" quat=".707 0 .707 0" size="0.05 0.02" type="cylinder"/>
 			<body name="shoulder_bl" pos="-0.225 0.0525 0">
 				<geom name="shoulder_motor_2_bl" pos="0 0.028750000000000005 0" quat=".707 .707 0 0" size="0.05 0.02" type="cylinder"/>
-				<joint axis="1 0 0" damping="0.0" name="shoulder_bl" stiffness="0"/>
+				<joint axis="1 0 0" name="shoulder_bl"/>
 				<body name="thigh_bl" pos="0 0.06875 0">
 					<geom fromto="0 0 0 0 0 -.2" name="thigh_bl" size=".02" type="capsule"/>
 					<geom name="shoulder_motor_bl" pos="0 0.04 0" quat=".707 .707 0 0" size="0.05 0.02" type="cylinder"/>
-					<joint axis="0 1 0" damping="0.0" name="thigh_bl" stiffness="0"/>
+					<joint axis="0 1 0" name="thigh_bl"/>
 					<body name="lower_leg_bl" pos="-0.0 0.0 -.2">
-						<geom fromto="0 0 0 0 0 -.2" name="lower_leg_bl" size=".02" type="capsule"/>
-						<joint axis="0 1 0" damping="0.0" name="lower_leg_bl" stiffness="0"/>
+						<geom fromto="0 0 0 0 0 -.2" name="lower_leg_bl" size=".01" type="capsule"/>
+						<geom name="foot_bl" pos="0 0 -.2" size=".02 .01 .02" type="ellipsoid"/>
+						<joint axis="0 1 0" name="lower_leg_bl"/>
 					</body>
 				</body>
 			</body>
 			<geom name="shoulder_motor_1_bl" pos="-0.14500000000000002 0.0525 0" quat=".707 0 .707 0" size="0.05 0.02" type="cylinder"/>
 			<body name="shoulder_br" pos="-0.225 -0.0525 0">
 				<geom name="shoulder_motor_2_br" pos="0 -0.028750000000000005 0" quat=".707 .707 0 0" size="0.05 0.02" type="cylinder"/>
-				<joint axis="1 0 0" damping="0.0" name="shoulder_br" stiffness="0"/>
+				<joint axis="1 0 0" name="shoulder_br"/>
 				<body name="thigh_br" pos="0 -0.06875 0">
 					<geom fromto="0 0 0 0 0 -.2" name="thigh_br" size=".02" type="capsule"/>
 					<geom name="shoulder_motor_br" pos="0 -0.04 0" quat=".707 .707 0 0" size="0.05 0.02" type="cylinder"/>
-					<joint axis="0 1 0" damping="0.0" name="thigh_br" stiffness="0"/>
+					<joint axis="0 1 0" name="thigh_br"/>
 					<body name="lower_leg_br" pos="-0.0 -0.0 -.2">
-						<geom fromto="0 0 0 0 0 -.2" name="lower_leg_br" size=".02" type="capsule"/>
-						<joint axis="0 1 0" damping="0.0" name="lower_leg_br" stiffness="0"/>
+						<geom fromto="0 0 0 0 0 -.2" name="lower_leg_br" size=".01" type="capsule"/>
+						<geom name="foot_br" pos="0 0 -.2" size=".02 .01 .02" type="ellipsoid"/>
+						<joint axis="0 1 0" name="lower_leg_br"/>
 					</body>
 				</body>
 			</body>

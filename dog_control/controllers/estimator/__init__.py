@@ -77,7 +77,7 @@ class Estimator:
             -geom.KP * (cur_motor_positions - last_target_motor_positions)
             - geom.KD * self.all_motor_velocity
         )
-        self.all_motor_torque = np.clip(torque, -self.max_torque, self.max_torque)
+        self.all_motor_torque = np.clip(torque, -geom.MAX_TORQUE, geom.MAX_TORQUE)
 
         for leg_id in range(4):
             lid, hid = leg_id * 3, leg_id * 3 + 3
@@ -107,13 +107,13 @@ class Estimator:
             base_velocity_global = self.body_rotation.apply(base_velocity_local)
 
             # force applied by foot computation
-            L_mat = geom.skew_matrix(all_deltas)
-            local_torques = [
-                rot.apply(ax * torque)
-                for rot, ax, torque in zip(all_rots, joint_axes, leg_torques)
-            ]
-            flag, foot_force_local = geom.torque_to_force(L_mat, local_torques)
+            flag, foot_force_local = geom.torque_to_force(jac, leg_torques)
             foot_force_global = self.body_rotation.apply(foot_force_local)
+            # foot_force_local = (
+            #     leg_torques.reshape((1, 3)) @ np.linalg.inv(jac.T)
+            # ).flatten()
+            # flag = 1
+            # foot_force_global = self.body_rotation.apply(foot_force_local)
 
             # Save the results
             self.all_foot_position[lid:hid] = foot_position

@@ -21,9 +21,9 @@ def add_defaults(mujoco, config):
         "joint",
         {
             # "limited": "true",
-            "damping": ".01",
+            "damping": ".001",
             "armature": ".1",
-            "stiffness": "8",
+            "stiffness": "0",
             "type": "hinge",
             "frictionloss": "0",
         },
@@ -35,7 +35,7 @@ def add_defaults(mujoco, config):
             "contype": "1",
             "conaffinity": "1",
             "condim": "3",
-            "friction": ".4 .1 .1",
+            "friction": "0.3 0.005 0.0001",  # "0 0 0",  # ".4 .1 .1",
             "material": "self",
         },
     )
@@ -62,7 +62,14 @@ def create_header(mujoco, config):
     ET.SubElement(mujoco, "compiler", {"settotalmass": "17", "coordinate": "local"})
     add_defaults(mujoco, config)
     ET.SubElement(mujoco, "statistic", {"center": "0 0 .7", "extent": "2"})
-    ET.SubElement(mujoco, "option", {"timestep": config["timestep"]})
+    ET.SubElement(
+        mujoco,
+        "option",
+        {
+            "timestep": config["timestep"],
+            # "gravity": "0 0 0",
+        },
+    )
 
 
 def create_ground(worldbody, config):
@@ -74,6 +81,8 @@ def create_ground(worldbody, config):
             "type": "plane",
             "conaffinity": "1",
             "pos": "0 0 0",
+            "friction": ".3 0.005 0.0001",
+            # "solref": "0.06 0.06",
             "size": "100 100 1",
             "material": "grid",
         },
@@ -134,7 +143,18 @@ def create_lower_leg(thigh, leg_data, config):
             "name": "lower_leg_" + leg_data["abbrev"],
             "type": "capsule",
             "fromto": "0 0 0 0 0 -.2",
-            "size": ".02",
+            "size": ".01",
+        },
+    )
+
+    ET.SubElement(
+        lower_leg,
+        "geom",
+        {
+            "name": "foot_" + leg_data["abbrev"],
+            "type": "ellipsoid",
+            "pos": "0 0 -.2",
+            "size": ".02 .01 .02",
         },
     )
 
@@ -143,11 +163,7 @@ def create_lower_leg(thigh, leg_data, config):
         "joint",
         {
             "name": "lower_leg_" + leg_data["abbrev"],
-            # "range": "-135 0",
-            "stiffness": config["joint_stiffness"],
-            "damping": config["joint_damping"],
             "axis": "0 1 0",
-            # "springref": "-90",
         },
     )
     return lower_leg
@@ -197,11 +213,7 @@ def create_thigh(shoulder, leg_data, config):
         "joint",
         {
             "name": "thigh_" + leg_data["abbrev"],
-            # "range": "0 90",
-            "stiffness": config["joint_stiffness"],
-            "damping": config["joint_damping"],
             "axis": "0 1 0",
-            # "springref": "45",
         },
     )
 
@@ -256,9 +268,6 @@ def create_shoulder(torso, leg_data, config):
         "joint",
         {
             "name": "shoulder_" + leg_data["abbrev"],
-            # "range": "-20 20",
-            "stiffness": config["joint_stiffness"],
-            "damping": config["joint_damping"],
             "axis": "1 0 0",
         },
     )

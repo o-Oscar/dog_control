@@ -25,10 +25,10 @@ LEG_FIRST_SITES = [
     np.array([-FIRST_SITE_DX, -FIRST_SITE_DY, 0]),
 ]
 
-gear_ratio = np.array([1, 1, 24 / 30])
+gear_ratio = np.array([1, 1, 24 / 30] * 4)
 base_kp = 100
 base_kd = 10
-base_max_torque = 7
+base_max_torque = 8
 KP = base_kp * gear_ratio
 KD = base_kd * gear_ratio
 MAX_TORQUE = base_max_torque * gear_ratio
@@ -81,7 +81,7 @@ def skew_matrix(all_deltas):
     return np.sum([skew(delta) for delta in all_deltas], axis=0)
 
 
-def torque_to_force(L_mat, local_torques):
-    res = np.linalg.lstsq(L_mat, local_torques)
-    min_singular = np.min(np.square(res.s))
-    return min_singular < 1e-5, res.x
+def torque_to_force(jac, leg_torques):
+    x, _, _, s = np.linalg.lstsq(jac, leg_torques)  # not transpose (I am a thug)
+    min_singular = np.min(np.square(s))
+    return min_singular < 1e-5, x

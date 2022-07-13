@@ -7,8 +7,10 @@ from typing import Callable
 import dog_control.controllers.estimator.geometry as geom
 import mujoco_py
 import numpy as np
-from dog_control.simulation.engine.create_mjcf import (DEFAULT_SRC_PATH,
-                                                       write_robot_to_file)
+from dog_control.simulation.engine.create_mjcf import (
+    DEFAULT_SRC_PATH,
+    write_robot_to_file,
+)
 from scipy.spatial.transform import Rotation as R
 
 
@@ -77,7 +79,7 @@ class Engine(BaseEngine):
     def step(self, frame, action):
 
         if self.config.mocap_activation is not None:
-            self.sim.data.eq_active[:] = self.config.mocap_activation(frame)
+            # self.sim.data.eq_active[:] = self.config.mocap_activation(frame)
             self.sim.model.eq_active[:] = self.config.mocap_activation(frame)
 
         if self.config.mocap_pos_callback is not None:
