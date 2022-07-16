@@ -13,6 +13,7 @@ class Estimator:
         self.logger.add_entry("base_velocity_local", 12)
         self.logger.add_entry("base_velocity_global", 12)
         self.logger.add_entry("foot_position", 12)
+        self.logger.add_entry("foot_position_global", 12)
         self.logger.add_entry("motor_torque", 12)
         self.logger.add_entry("force_flag", 4)
         self.logger.add_entry("foot_force_local", 12)
@@ -25,6 +26,7 @@ class Estimator:
         self.all_motor_velocity = np.zeros((12,))
         self.body_rotation = R.identity()
         self.all_foot_position = np.zeros((12,))
+        self.all_foot_position_global = np.zeros((12,))
         self.all_foot_velocity = np.zeros((12,))
         self.all_base_velocity_local = np.zeros((12,))
         self.all_base_velocity_global = np.zeros((12,))
@@ -32,6 +34,7 @@ class Estimator:
         self.all_force_flag = np.zeros((4,))
         self.all_foot_force_local = np.zeros((12,))
         self.all_foot_force_global = np.zeros((12,))
+        self.all_jacs = np.zeros((4, 3, 3))
 
     def estimate(
         self,
@@ -96,6 +99,7 @@ class Estimator:
             all_rots = geom.calc_all_rots(joint_axes, motor_positions)
             all_sites = geom.calc_all_sites(all_rots, first_site, leg_positions)
             foot_position = all_sites[-1]
+            foot_position_global = self.body_rotation.apply(foot_position)
             all_deltas = all_sites[:-1] - foot_position
 
             # velocity computation
@@ -117,12 +121,14 @@ class Estimator:
 
             # Save the results
             self.all_foot_position[lid:hid] = foot_position
+            self.all_foot_position_global[lid:hid] = foot_position_global
             self.all_foot_velocity[lid:hid] = foot_velocity
             self.all_base_velocity_local[lid:hid] = base_velocity_local
             self.all_base_velocity_global[lid:hid] = base_velocity_global
             self.all_force_flag[leg_id] = flag
             self.all_foot_force_local[lid:hid] = foot_force_local
             self.all_foot_force_global[lid:hid] = foot_force_global
+            self.all_jacs[leg_id] = jac
 
     def log(self):
         self.logger["motor_velocity"] = self.all_motor_velocity

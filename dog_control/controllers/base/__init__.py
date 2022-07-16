@@ -20,22 +20,24 @@ class BaseController(abc.ABC):
         self.cur_frame = 0
 
         SHOULDER_RANGE_DEGREES = 20
-        THIGH_RANGE_DEGREES = 45
-        LOWER_FOOT_RANGE_DEGREE = 90
+        THIGH_MAX_RANGE_DEGREES = 90
+        THIGH_MIN_RANGE_DEGREES = -45
+        LOWER_FOOT_MAX_RANGE_DEGREE = 135
+        LOWER_FOOT_MIN_RANGE_DEGREE = -45
 
         self.action_min_degrees = np.array(
             [
                 -SHOULDER_RANGE_DEGREES,
-                -THIGH_RANGE_DEGREES,
-                -LOWER_FOOT_RANGE_DEGREE,
+                THIGH_MIN_RANGE_DEGREES,
+                LOWER_FOOT_MIN_RANGE_DEGREE,
             ]
             * 4
         )
         self.action_max_degrees = np.array(
             [
                 SHOULDER_RANGE_DEGREES,
-                THIGH_RANGE_DEGREES,
-                LOWER_FOOT_RANGE_DEGREE,
+                THIGH_MAX_RANGE_DEGREES,
+                LOWER_FOOT_MAX_RANGE_DEGREE,
             ]
             * 4
         )

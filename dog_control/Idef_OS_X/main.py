@@ -1,5 +1,7 @@
 # from dog_control.controllers.dummy import Controller
-from dog_control.controllers.impedance_control import Controller
+# from dog_control.controllers.impedance_control import Controller
+# from dog_control.controllers.force_control import Controller
+from dog_control.controllers.switcher import Controller
 
 # from dog_control.controllers.positive_twitch import Controller
 # from dog_control.controllers.step_moves import Controller

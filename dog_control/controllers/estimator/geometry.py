@@ -6,18 +6,19 @@ LEG_MOTOR_AXES = [
     np.array([0, 1, 0]),
     np.array([0, 1, 0]),
 ]
+FIRST_SITE_DX = 0.225
+FIRST_SITE_DY = 0.0525
+SHOULDER_DY = 0.06875
 LEFT_LEG_POSITIONS = [
-    np.array([0, 0.06875, 0]),
+    np.array([0, SHOULDER_DY, 0]),
     np.array([0, 0, -0.2]),
     np.array([0, 0, -0.2]),
 ]
 RIGHT_LEG_POSITIONS = [
-    np.array([0, -0.06875, 0]),
+    np.array([0, -SHOULDER_DY, 0]),
     np.array([0, 0, -0.2]),
     np.array([0, 0, -0.2]),
 ]
-FIRST_SITE_DX = 0.225
-FIRST_SITE_DY = 0.0525
 LEG_FIRST_SITES = [
     np.array([FIRST_SITE_DX, FIRST_SITE_DY, 0]),
     np.array([FIRST_SITE_DX, -FIRST_SITE_DY, 0]),

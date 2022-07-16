@@ -24,7 +24,7 @@ if False:
 
     plt.show()
 
-if True:
+if False:
     log_path = "logs/local/log1"
     local_log = get_all_logs(log_path)
     print(local_log.keys())
@@ -44,6 +44,43 @@ if True:
 
     # plt.figure()
     # # delta = local_log["motor_torque"]
+    # plt.plot(local_log["foot_force_global"][:, 3:6])
+
+    # plt.figure()
+    # # delta = local_log["motor_torque"]
+    # plt.plot(local_log["foot_force_global"][:, :3])
+
+    plt.show()
+
+if True:
+    log_path = "logs/local/log1"
+    local_log = get_all_logs(log_path)
+    print(local_log.keys())
+
+    log_path = "logs/dog/log1"
+    dog_log = get_all_logs(log_path)
+
+    # plt.figure()
+    # s = np.sum(dog_log["foot_position"].reshape((-1, 4, 3)), axis=1)
+    # print(s[s.shape[0] // 2, 2] / 9.81)
+    # plt.plot(s)
+
+    for i in range(4):
+        plt.figure()
+        s = dog_log["foot_force_local"][:, 3 * i : 3 * i + 3]
+        print(s[s.shape[0] // 2, 2] / 9.81)
+        plt.plot(s)
+
+    # plt.figure()
+    # s = np.sum(dog_log["foot_force_global"].reshape((-1, 4, 3)), axis=1)
+    # print(s[-1, 2] / 9.81)
+    # plt.plot(s)
+
+    # plt.figure()
+    # # delta = local_log["motor_torque"]
+    # plt.figure()
+    # plt.plot(local_log["foot_force_global"][:, :3])
+    # plt.figure()
     # plt.plot(local_log["foot_force_global"][:, 3:6])
 
     # plt.figure()

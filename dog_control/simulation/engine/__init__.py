@@ -76,6 +76,9 @@ class Engine(BaseEngine):
             self.viewer = mujoco_py.MjViewer(self.sim)
             self.viewer.render()
 
+        self.delta_q = np.zeros((12,))
+        # self.delta_q = np.array([0.05, 0, 0] * 4)
+
     def step(self, frame, action):
 
         if self.config.mocap_activation is not None:
@@ -91,7 +94,7 @@ class Engine(BaseEngine):
         for i in range(10):
             leg_pd_torque = self.compute_pd_torque(action)
             if self.config.force_callback is not None:
-                self.sim.data.xfrc_applied[:] = self.config.force_callback()
+                self.sim.data.xfrc_applied[:] = self.config.force_callback(frame)
             self.sim.data.qfrc_applied[6:] = leg_pd_torque
             self.sim.step()
 
@@ -109,7 +112,7 @@ class Engine(BaseEngine):
         q = self.sim.data.qpos[7:]
         q_dot = self.sim.data.qvel[6:]
 
-        torque = -geom.KP * (q - target_q) - geom.KD * q_dot
+        torque = -geom.KP * (q - target_q - self.delta_q) - geom.KD * q_dot
         torque = np.clip(torque, -geom.MAX_TORQUE, geom.MAX_TORQUE)
         return torque
 

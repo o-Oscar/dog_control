@@ -2,6 +2,7 @@ import time
 
 import numpy as np
 from dog_control.controllers.base import BaseController
+from dog_control.controllers.estimator import Estimator
 
 
 class Controller(BaseController):
@@ -11,13 +12,22 @@ class Controller(BaseController):
         self.has_been_called = False
         self.dt = 1 / 30
 
-    def _choose_action(self) -> np.ndarray:
-        target_position = np.zeros((12,))
+        self.mask = np.array([0, 1, 1] * 4)
 
-        for leg_id in range(4):
-            # target_position[leg_id * 3 + 0] = self.cur_motor_positions[leg_id * 3 + 0]
-            target_position[leg_id * 3 + 1] = self.cur_motor_positions[leg_id * 3 + 1]
-            target_position[leg_id * 3 + 2] = self.cur_motor_positions[leg_id * 3 + 2]
+    def _choose_action(self) -> np.ndarray:
+        zero_impedance_target = (
+            self.cur_motor_positions + self.dt * self.estimator.all_motor_velocity * 2
+        )
+
+        target_position = zero_impedance_target * self.mask
+
+        # for leg_id in range(4):
+        #     # target_position[leg_id * 3 + 0] = self.cur_motor_positions[leg_id * 3 + 0]
+        #     target_position[leg_id * 3 + 1] = (
+        #         self.cur_motor_positions[leg_id * 3 + 1]
+        #         + self.dt * self.estimator.all_motor_velocity[leg_id * 3 + 1]
+        #     )
+        #     target_position[leg_id * 3 + 2] = self.cur_motor_positions[leg_id * 3 + 2]
 
         return target_position
 

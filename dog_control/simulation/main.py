@@ -4,7 +4,7 @@ import numpy as np
 
 # from dog_control.controllers.dummy import Controller
 # from dog_control.controllers.impedance_control import Controller
-from dog_control.controllers.position_reacher import Controller
+from dog_control.controllers.switcher import Controller
 
 # from dog_control.controllers.positive_twitch import Controller
 # from dog_control.controllers.step_moves import Controller
@@ -13,12 +13,19 @@ from dog_control.simulation.engine import Engine, EngineConfig
 from dog_control.simulation.IdefX import IdefX
 from scipy.spatial.transform import Rotation as R
 
+# from dog_control.controllers.force_control import Controller
+
+
 # from dog_control.controllers.position_reacher import Controller
 
 
-def constant_force():
-    to_return = np.zeros((14, 6))
-    to_return[7, 0] = 100
+# from dog_control.controllers.position_reacher import Controller
+
+
+def constant_force(frame):
+    to_return = np.zeros((19, 6))
+    # to_return[12, 0] = 10 if frame < 30 else 0
+    to_return[6, 5] = 3
     return to_return
 
 
@@ -69,7 +76,7 @@ def mocap_pos_callback(frame):
     to_return = np.zeros((5, 3))
 
     # base_pos = np.array([sine(frame, 3, 0.2), 0, 0.7])
-    base_pos = np.array([0, 0, 0.4 - frame * 0.1 / 600])
+    base_pos = np.array([0, 0, 0.4])
 
     foot_pos = np.array([0, 0, 0])
 
@@ -97,13 +104,13 @@ def main():
         fix_root=True,
         fix_feets=True,
         use_viewer=realtime,
-        force_callback=None,
+        force_callback=constant_force,
         # mocap_activation=None,  # for in the air tests
         # mocap_pos_callback=mocap_pos_callback,
         # mocap_rot_callback=mocap_rot_callback,
         mocap_activation=mocap_activation,  # for tests with the ground
         mocap_pos_callback=mocap_pos_callback,
-        mocap_rot_callback=mocap_rot_callback,
+        # mocap_rot_callback=mocap_rot_callback,
     )
 
     idefX = IdefX(
